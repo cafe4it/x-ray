@@ -18,13 +18,14 @@ var walk = require('./lib/walk')
 var fs = require('fs')
 
 var CONST = {
-  CRAWLER_METHODS: ['concurrency', 'throttle', 'timeout', 'driver', 'delay', 'limit', 'abort'],
+  CRAWLER_METHODS: ['concurrency', 'throttle', 'timeout', 'driver', 'delay', 'limit', 'process_paginate', 'abort'],
   INIT_STATE: {
     stream: false,
     concurrency: Infinity,
     paginate: false,
     limit: Infinity,
-    abort: false
+    abort: false,
+    process_paginate: false
   }
 }
 
@@ -117,6 +118,8 @@ function Xray (options) {
 
           var url = resolve($, false, paginate, filters)
           debug('paginate(%j) => %j', paginate, url)
+
+          url = state.process_paginate ? state.process_paginate(url) : url
 
           if (!isUrl(url)) {
             debug('%j is not a url, finishing up', url)
